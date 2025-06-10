@@ -3,9 +3,11 @@ import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Image } from 'rea
 import { Card, useTheme, Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { format } from 'date-fns';
+import { useLocalSearchParams } from 'expo-router';
 
 export default function DashboardScreen() {
   const theme = useTheme();
+  const { userType } = useLocalSearchParams();
   const today = new Date();
 
   // Sample data
@@ -43,8 +45,10 @@ export default function DashboardScreen() {
         <View style={styles.welcomeSection}>
           <View style={styles.welcomeTextContainer}>
             <Text style={styles.dateText}>{format(today, 'EEEE, MMMM d, yyyy')}</Text>
-            <Text style={styles.welcomeText}>Assalamu Alaikum,</Text>
-            <Text style={styles.nameText}>Ahmed</Text>
+            {userType === 'student' && <Text style={styles.welcomeMessage}>Welcome, Student!</Text>}
+            {userType === 'parent' && <Text style={styles.welcomeMessage}>Welcome, Parent!</Text>}
+            {userType === 'teacher' && <Text style={styles.welcomeMessage}>Welcome, Teacher!</Text>}
+            {(!userType || (userType !== 'student' && userType !== 'parent' && userType !== 'teacher')) && <Text style={styles.welcomeMessage}>Welcome!</Text>}
           </View>
           <Image
             source={{ uri: 'https://images.pexels.com/photos/6214476/pexels-photo-6214476.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' }}
@@ -169,6 +173,12 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
+  welcomeMessage: { // Added for the new welcome message
+    fontSize: 22,
+    fontFamily: 'Poppins-Bold', // Matched nameText style for prominence
+    color: '#0D4C92', // Matched nameText color
+    marginBottom: 4, // Added some margin
+  },
   welcomeSection: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -184,16 +194,9 @@ const styles = StyleSheet.create({
     color: '#666',
     marginBottom: 4,
   },
-  welcomeText: {
-    fontFamily: 'Poppins-Regular',
-    fontSize: 16,
-    color: '#333',
-  },
-  nameText: {
-    fontFamily: 'Poppins-Bold',
-    fontSize: 24,
-    color: '#0D4C92',
-  },
+  // welcomeText style can be removed if not used elsewhere, or kept for other greetings.
+  // For this specific message, welcomeMessage is more direct.
+  // nameText style is effectively replaced by welcomeMessage for the main greeting.
   profileImage: {
     width: 60,
     height: 60,
